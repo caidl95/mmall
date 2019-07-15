@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.mmall.dao.AddressMapper">
+	
+	<!-- 增加收货地址数据 -->
+	<!-- Integer insert(Address address) -->
+	<insert id="insert">
+		INSERT INTO mmall_address (
+			uid, name,
+			province, city,
+			area, district,
+			zip, address,
+			phone, tel,
+			tag, is_default,
+			create_time,update_time
+		) VALUE (
+			#{uid}, #{name},
+			#{province}, #{city},
+			#{area}, #{district},
+			#{zip}, #{address},
+			#{phone}, #{tel},
+			#{tag}, #{isDefault},
+			now(), now()
+		)
+	</insert>
+	
+	<!-- 根据id删除收货地址数据 -->
+	<!-- Integer deleteByAid(Integer aid) -->
+	<delete id="deleteByAid">
+		DELETE FROM mmall_address WHERE aid=#{aid}
+	</delete>
+	
+	<!-- 将指定用户的所有收货地址设置为非默认 -->
+	<!-- Integer updateNonDefault(Integer uid) -->
+	<update id="updateNonDefault">
+		UPDATE
+			mmall_address
+		SET
+			is_default=0
+		WHERE 
+			uid=#{uid}
+	</update>
+	
+	<!-- 将指定的收货地址设置为默认 -->
+	<!-- Integer updateDefault(Integer aid) -->
+	<update id="updateDefault">
+		UPDATE
+			mmall_address
+		SET
+			is_default=1
+		WHERE 
+			aid=#{aid}
+	</update>
+	
+	<!-- 统计指定用户的收货地址数据的数量 -->
+	<!-- Integer countByUid(Integer uid) -->
+	<select id="countByUid"  resultType="java.lang.Integer">
+		SELECT 
+			COUNT(aid) 
+		FROM 
+			mmall_address
+		WHERE 
+			uid=#{uid}
+	</select>
+	
+	<!-- 根据用户id查询收货地址列表 -->
+	<!-- List<Address> findByUid(Integer uid) -->
+	<select id="findByUid"  resultType="com.mmall.pojo.Address">
+		SELECT 
+			aid, name, 
+			district, address, 
+			phone, tag, 
+			is_default AS isDefault
+		FROM 
+			mmall_address
+		WHERE 
+			uid=#{uid} 
+		ORDER BY 
+			is_default DESC,update_time DESC
+	</select>
+	
+	<!-- 根据收货地址id查询匹配的数据 -->
+	<!-- Address findByAid(Integer aid) -->
+	<select id="findByAid"  resultType="com.mmall.pojo.Address">
+		SELECT 
+			uid, 
+			name, phone,
+			district, address,
+			is_default AS isDefault
+		FROM 
+			mmall_address
+		WHERE 
+			aid=#{aid} 
+	</select>
+	
+	<!-- 获取某用户最后修改的收货地址数据 -->
+	<!-- Address findLastModified(Integer uid) -->
+	<select id="findLastModified"  resultType="com.mmall.pojo.Address">
+		SELECT 
+			aid
+		FROM 
+			mmall_address
+		WHERE 
+			uid=#{uid}
+		ORDER BY
+			update_time DESC, aid DESC
+		LIMIT
+			0,1
+	</select>
+	
+</mapper>
+
+
+
+
+
+
